@@ -9,7 +9,7 @@ pandas_show_all()
 
 def fetch_programmes(url: str, headers: dict) -> pd.DataFrame:
     """Fetch tennis programmes from the given URL and return as a DataFrame."""
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, verify=False)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
