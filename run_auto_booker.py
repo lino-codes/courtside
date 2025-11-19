@@ -1,6 +1,8 @@
-from auto_booker import court_booker, lesson_booker
+from domain.auto_booker import court_booker, lesson_booker
 from config import coverage
+from utils.df_utils import pandas_show_all
 
+pandas_show_all()
 
 def run_court_booker():
     # venue_name = 'Bethnal Green Gardens'
@@ -13,7 +15,8 @@ def run_court_booker():
 
 def run_lesson_booker():
     class_level = 'Advanced'
-    lesson_booker(class_level=class_level, exclude_days=[], full_days=['Sat', 'Sun'], start_time=17)
+    df = lesson_booker(class_level=class_level, exclude_days=[], full_days=['Sat', 'Sun'], lesson_start=18)
+    print(df)
 
 
 
