@@ -1,7 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import re
 
+from config import headers, day_names
 from utils.df_utils import pandas_show_all
 
 pandas_show_all()
@@ -30,3 +32,17 @@ def fetch_programmes(url: str, headers: dict) -> pd.DataFrame:
 
     df = pd.DataFrame(programmes)
     return df[["title", "location", "time", "coached", "status"]]
+
+def get_class_time_info(url_link):
+    class_response = requests.get(url_link, headers=headers, verify=False)
+    soup = BeautifulSoup(class_response.text, "html.parser")
+    programmes_div = soup.find_all("div", class_="session available")
+    programmes_dates = []
+    # programmes_times = [] # NOTE: Time are being extracted from somewhere elsen
+    pattern = re.compile(r'\b(?:' + '|'.join(day_names) + r')\b', re.IGNORECASE)
+    for programme in programmes_div:
+        programme_date = programme.find("div", class_="date").get_text(strip=True)
+        programme_date = pattern.sub('', programme_date)
+        programmes_dates.append(programme_date.strip())
+        # programmes_times.append(programme.find('div', class_='time'))
+    return programmes_dates

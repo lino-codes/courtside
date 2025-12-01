@@ -13,15 +13,17 @@ def get_courtside_lessons():
 
 
 def get_courtside_courts():
-    venues = ['Ropemakers Field', 'Victoria Park']
-    dates = [datetime.date(2025, 10, 18)]
+    venues = ['Ropemakers Field', 'Bethnal Green Gardens']
+    today = datetime.date.today()
+    dates = [today + datetime.timedelta(days=i) for i in range(8)]
+
     start_time = datetime.time(17, 00)
     end_time = datetime.time(21, 00)
-    fetch_court(selected_venues=venues, selected_dates=dates, selected_times=start_time)
+    fetch_court(selected_venues=venues, selected_dates=dates, selected_times=start_time, worker_schedule=True)
 
 
 
 
 if __name__ == '__main__':
-    # get_courtside_courts()
-    get_courtside_lessons()
+    get_courtside_courts()
+    # get_courtside_lessons()

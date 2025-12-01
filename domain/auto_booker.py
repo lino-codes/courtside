@@ -5,7 +5,8 @@ import logging
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-from config import headers
+from config import headers, day_names
+from domain.lesson import get_class_time_info
 from utils.time_utils import (parse_time)
 
 logging.basicConfig(
@@ -53,44 +54,26 @@ def lesson_booker(class_level='Advanced', exclude_days=None, full_days=None, les
                     url_link = f"https://tennistowerhamlets.com/{div.find('form')['action']}"
 
 
-
-
                 weekday = weekday_match.group(1) if weekday_match else None
                 start_time = round(parse_time(times[0] if len(times) > 0 else None) * 2) / 2
                 end_time = round(parse_time(times[1] if len(times) > 0 else None) * 2) / 2
 
+                programmes_dates = []
 
                 if weekday in exclude_days:
                     continue
-                if weekday in full_days:
+                if weekday in full_days or start_time >= lesson_start:
                     logger.info(f'Class Found: {title}')
-                    class_response = requests.get(url_link, headers=headers, verify=False)
-                    soup = BeautifulSoup(class_response.text, "html.parser")
-                    programmes_div = soup.find_all("div", class_="session available")
-                    print('The programmes div')
-                    print(programmes_div)
-                    programme_info = {"title": title,
-                                      "location": card.find("div", class_="location").get_text(strip=True),
-                                      "day": weekday,
-                                      "start_time": start_time,
-                                      "end_time": end_time,
-                                      'url': url_link,
-                                      }
-                    programmes_info.append(programme_info)
-                elif start_time > lesson_start:
-                    logger.info(f'Class Found: {title}')
-                    class_response = requests.get(url_link, headers=headers, verify=False)
-                    soup = BeautifulSoup(class_response.text, "html.parser")
-                    programmes_div = soup.find_all("div", class_="session available")
-                    print('The programmes div')
-                    print(programmes_div)
-                    programme_info = {"title": title,
-                                      "location": card.find("div", class_="location").get_text(strip=True),
-                                      "day": weekday,
-                                      "start_time": start_time,
-                                      "end_time": end_time,
-                                      'url': url_link
-                                      }
+                    programmes_dates = get_class_time_info(url_link)
+                    programme_info = {
+                        "title": title,
+                        "location": card.find("div", class_="location").get_text(strip=True),
+                        "day": weekday,
+                        "start_time": start_time,
+                        "end_time": end_time,
+                        'url': url_link,
+                        'dates': ', '.join(programmes_dates)
+                    }
                     programmes_info.append(programme_info)
     return pd.DataFrame(programmes_info)
 

@@ -26,3 +26,5 @@ coverage = {'Ropemakers Field': {'website_name': 'ropemakers-field',
                                                  157: 4}
                                       }}
 
+bot_token = "8242618969:AAEmpuW1_StOkCPXJJuxHW2F6Q3f8TRdVbQ"
+day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
